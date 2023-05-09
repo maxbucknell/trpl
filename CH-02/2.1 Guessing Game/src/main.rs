@@ -7,7 +7,7 @@ fn main() {
     println!("-----------------");
 
     let secret_number = rand::thread_rng().gen_range(1..=100);
-
+    let mut guesses_count: u64 = 0;
 
     loop {
         println!("Please input your guess.");
@@ -23,6 +23,8 @@ fn main() {
             Err(_) => continue,
         };
 
+        guesses_count += 1;
+
         println!("You guessed: {guess}");
 
         match guess.cmp(&secret_number) {
@@ -33,5 +35,10 @@ fn main() {
                 break;
             }
         }
+    }
+
+    match guesses_count {
+        1 => println!("Congratulations! You got it first try!"),
+        n => println!("Congratulations! You guessed it in {n} goes.")
     }
 }
