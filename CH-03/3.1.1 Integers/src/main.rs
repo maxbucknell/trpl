@@ -8,9 +8,8 @@ pub fn to(input: NativeInt) -> Int {
     let mut result: Int = [false; 8];
     let mut counter = input;
 
-    for index in 0..8 {
-        let power = 7 - index;
-        let value: NativeInt = 1 << power;
+    for index in (0..8).rev() {
+        let value: NativeInt = 1 << index;
 
         if counter >= value {
             counter -= value;
@@ -18,7 +17,9 @@ pub fn to(input: NativeInt) -> Int {
         }
     }
 
-    assert_eq!(counter, 0);
+    if counter > 0 {
+        panic!("Failed to convert {input}, had {counter} left over.")
+    }
 
     result
 }
@@ -27,9 +28,8 @@ pub fn from(input: Int) -> NativeInt {
     let mut result: NativeInt = 0;
 
     for index in 0..8 {
-        let power = 7 - index;
         if input[index] {
-            result += 1 << power;
+            result += 1 << index;
         }
     }
 
@@ -43,17 +43,17 @@ mod tests {
     #[test]
     fn test_to() {
         assert_eq!(to(0), [false; 8]);
-        assert_eq!(to(1), [false, false, false, false, false, false, false, true]);
-        assert_eq!(to(127), [false, true, true, true, true, true, true, true]);
-        assert_eq!(to(75), [false, true, false, false, true, false, true, true]);
+        assert_eq!(to(1), [true, false, false, false, false, false, false, false]);
+        assert_eq!(to(127), [true, true, true, true, true, true, true, false]);
+        assert_eq!(to(75), [true, true, false, true, false, false, true, false]);
     }
 
 
     #[test]
     fn test_from() {
         assert_eq!(0, from([false; 8]));
-        assert_eq!(1, from([false, false, false, false, false, false, false, true]));
-        assert_eq!(127, from([false, true, true, true, true, true, true, true]));
-        assert_eq!(75, from([false, true, false, false, true, false, true, true]));
+        assert_eq!(1, from([true, false, false, false, false, false, false, false]));
+        assert_eq!(127, from([true, true, true, true, true, true, true, false]));
+        assert_eq!(75, from([true, true, false, true, false, false, true, false]));
     }
 }
